@@ -1,5 +1,5 @@
-CREATE DATABASE Group6_Spotify
-USE Group6_Spotify
+CREATE DATABASE Group8_Spotify
+USE Group8_Spotify
 
 -- I haven't run this code yet, please don't run this code yet --
 CREATE TABLE [tblDEVICE_TYPE] (

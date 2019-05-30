@@ -1,207 +1,148 @@
-CREATE DATABASE Group8_Spotify
+--CREATE DATABASE Group8_Spotify
 USE Group8_Spotify
 
 -- I haven't run this code yet, please don't run this code yet --
+/*
 CREATE TABLE [tblDEVICE_TYPE] (
-  [deviceTypeID] <type>,
-  [deviceTypeName] <type>,
-  [deviceTypeDescr] <type>
+	[deviceTypeID] INTEGER IDENTITY(1,1) primary key,
+	[deviceTypeName] varchar(75) not null,
+	[deviceTypeDescr] varchar(500) NULL
 );
-
-CREATE INDEX [pk] ON  [tblDEVICE_TYPE] ([deviceTypeID]);
-
-CREATE TABLE [tblRECORDING] (
-	  [recordingID] <type>,
-	  [songGroupID] <type>,
-	  [genreID] <type>,
-	  [recordingRatingID] <type>,
-	  [recordingLength] <type>
-);
-
-CREATE INDEX [pk] ON  [tblRECORDING] ([recordingID]);
-
-CREATE INDEX [fk] ON  [tblRECORDING] ([songGroupID], [genreID], [recordingRatingID]);
-
-CREATE TABLE [tblARTIST] (
-	  [artistID] <type>,
-	  [artistFName] <type>,
-	  [artistLName] <type>,
-	  [artistBio] <type>,
-	  [artistPic] <type>
-);
-
-CREATE INDEX [pk] ON  [tblARTIST] ([artistID]);
-
-CREATE TABLE [tblCUSTOMER_DEVICE] (
-	  [custDeviceID] <type>,
-	  [custID] <type>,
-	  [deviceID] <type>
-);
-
-CREATE INDEX [pk] ON  [tblCUSTOMER_DEVICE] ([custDeviceID]);
-
-CREATE INDEX [fk] ON  [tblCUSTOMER_DEVICE] ([custID], [deviceID]);
-
-CREATE TABLE [tblCUSTOMER] (
-	  [custID] <type>,
-	  [custTypeID] <type>,
-	  [custFName] <type>,
-	  [custLName] <type>,
-	  [custDOB] <type>,
-	  [custAddress] <type>,
-	  [custState] <type>,
-	  [custZip] <type>,
-	  [custLanguage] <type>,
-	  [custPic] <type>
-);
-
-CREATE INDEX [pk] ON  [tblCUSTOMER] ([custID]);
-
-CREATE INDEX [fk] ON  [tblCUSTOMER] ([custTypeID]);
-
-CREATE TABLE [tbl_GROUP] (
-	  [groupID] <type>,
-	  [groupName] <type>,
-	  [groupBio] <type>,
-	  [groupPic] <type>
-);
-
-CREATE INDEX [pk] ON  [tbl_GROUP] ([groupID]);
-
-CREATE TABLE [tblCUSTOMER_TYPE] (
-	  [custTypeID] <type>,
-	  [custTypeName] <type>,
-	  [custTypeDescr] <type>
-);
-
-CREATE INDEX [pk] ON  [tblCUSTOMER_TYPE] ([custTypeID]);
-
-CREATE TABLE [tblDEVICE] (
-	  [deviceID] <type>,
-	  [deviceTypeID] <type>,
-	  [deviceName] <type>
-);
-
-CREATE INDEX [pk] ON  [tblDEVICE] ([deviceID]);
-
-CREATE INDEX [fk] ON  [tblDEVICE] ([deviceTypeID]);
-
-CREATE TABLE [tblROLE] (
-	  [roleID] <type>,
-	  [roleName] <type>,
-	  [roleDescr] <type>
-);
-
-CREATE INDEX [pk] ON  [tblROLE] ([roleID]);
-
-CREATE TABLE [tblGROUP_MEMBER] (
-	  [groupMemberID] <type>,
-	  [groupID] <type>,
-	  [artistID] <type>,
-	  [roleID] <type>
-);
-
-CREATE INDEX [pk] ON  [tblGROUP_MEMBER] ([groupMemberID]);
-
-CREATE INDEX [fk] ON  [tblGROUP_MEMBER] ([groupID], [artistID], [roleID]);
-
-CREATE TABLE [tblRECORDING_RATING] (
-	  [recordingRatingID] <type>,
-	  [ratingName] <type>
-);
-
-CREATE INDEX [pk] ON  [tblRECORDING_RATING] ([recordingRatingID]);
-
-CREATE TABLE [tblALBUM] (
-	  [albumID] <type>,
-	  [albumName] <type>,
-	  [albumPic] <type>,
-	  [albumDescr] <type>,
-	  [albumLabel] <type>,
-	  [albumReleaseDate] <type>
-);
-
-CREATE INDEX [pk] ON  [tblALBUM] ([albumID]);
-
-CREATE TABLE [tblPLAYLIST] (
-	  [playlistID] <type>,
-	  [playlistTypeID] <type>,
-	  [playlistName] <type>,
-	  [playlistDescr] <type>
-);
-
-CREATE INDEX [pk] ON  [tblPLAYLIST] ([playlistID]);
-
-CREATE INDEX [fk] ON  [tblPLAYLIST] ([playlistTypeID]);
-
-CREATE TABLE [tblPLAYLIST_TYPE] (
-	  [playlistTypeID] <type>,
-	  [playlistTypeName] <type>
-);
-
-CREATE INDEX [pk] ON  [tblPLAYLIST_TYPE] ([playlistTypeID]);
-
-CREATE TABLE [tblCUSTOMER_PLAYLIST] (
-	  [customerPlaylistID] <type>,
-	  [custID] <type>,
-	  [playlistID] <type>
-);
-
-CREATE INDEX [pk] ON  [tblCUSTOMER_PLAYLIST] ([customerPlaylistID]);
-
-CREATE INDEX [fk] ON  [tblCUSTOMER_PLAYLIST] ([custID], [playlistID]);
-
-CREATE TABLE [tblEVENT] (
-	  [eventID] <type>,
-	  [recordingID] <type>,
-	  [eventTypeID] <type>,
-	  [custID] <type>,
-	  [eventDate] <type>
-);
-
-CREATE INDEX [pk] ON  [tblEVENT] ([eventID]);
-
-CREATE INDEX [fk] ON  [tblEVENT] ([recordingID], [eventTypeID], [custID]);
-
-CREATE TABLE [tblRECORDING_ALBUM] (
-	  [recordingAlbumID] <type>,
-	  [recordingID] <type>,
-	  [albumID] <type>
-);
-
-CREATE INDEX [pk] ON  [tblRECORDING_ALBUM] ([recordingAlbumID]);
-
-CREATE INDEX [fk] ON  [tblRECORDING_ALBUM] ([recordingID], [albumID]);
-
-CREATE TABLE [tblSONG_GROUP] (
-	  [songGroupID] <type>,
-	  [songID] <type>,
-	  [groupID] <type>
-);
-
-CREATE INDEX [pk] ON  [tblSONG_GROUP] ([songGroupID]);
-
-CREATE INDEX [fk] ON  [tblSONG_GROUP] ([songID], [groupID]);
-
-CREATE TABLE [tblEVENT_TYPE] (
-	  [eventTypeID] <type>,
-	  [eventTypeName] <type>,
-	  [eventTypeDescr] <type>
-);
-
-CREATE INDEX [pk] ON  [tblEVENT_TYPE] ([eventTypeID]);
-
-CREATE TABLE [tblGENRE] (
-	  [genreID] <type>,
-	  [genreName] <type>,
-	  [genreDescr] <type>
-);
-
-CREATE INDEX [pk] ON  [tblGENRE] ([genreID]);
 
 CREATE TABLE [tblSONG] (
-	  [songID] <type>,
-	  [songName] <type>
+	[songID] INTEGER IDENTITY(1,1) primary key,
+	[songName] varchar(75) not null
 );
 
-CREATE INDEX [pk] ON  [tblSONG] ([songID]);
+CREATE TABLE [tblGENRE] (
+	[genreID] INTEGER IDENTITY(1,1) primary key,
+	[genreName] varchar(75) not null,
+	[genreDescr] varchar(500) NULL
+);
+
+CREATE TABLE [tblEVENT_TYPE] (
+	[eventTypeID] INTEGER IDENTITY(1,1) primary key,
+	[eventTypeName] varchar(75) not null,
+	[eventTypeDescr] varchar(500) NULL
+);
+
+CREATE TABLE [tblARTIST] (
+	[artistID] INTEGER IDENTITY(1,1) primary key,
+	[artistFName] varchar(75) not null,
+	[artistLName] varchar(75) not null,
+	[artistBio] varchar(500) not null,
+	[artistPic] varchar(500) not null
+);
+
+CREATE TABLE [tblGROUP] (
+	[groupID] INTEGER IDENTITY(1,1) primary key,
+	[groupName] varchar(75) not null,
+	[groupBio] varchar(500) not null,
+	[groupPic] varchar(500) not null
+);
+
+CREATE TABLE [tblCUSTOMER_TYPE] (
+	[custTypeID] INTEGER IDENTITY(1,1) primary key,
+	[custTypeName] varchar(75) not null,
+	[custTypeDescr] varchar(500) NULL
+);
+
+CREATE TABLE [tblROLE] (
+	[roleID] INTEGER IDENTITY(1,1) primary key,
+	[roleName] varchar(75) not null,
+	[roleDescr] varchar(500) NULL
+);
+
+CREATE TABLE [tblRECORDING_RATING] (
+	[recordingRatingID] INTEGER IDENTITY(1,1) primary key,
+	[ratingName] varchar(75) not null
+);
+
+CREATE TABLE [tblALBUM] (
+	[albumID] INTEGER IDENTITY(1,1) primary key,
+	[albumName] varchar(75) not null,
+	[albumPic] varchar(500) not null,
+	[albumDescr] varchar(500) NULL,
+	[albumLabel] varchar(75) NULL,
+	[albumReleaseDate] Date not null
+);
+
+CREATE TABLE [tblPLAYLIST_TYPE] (
+	[playlistTypeID] INTEGER IDENTITY(1,1) primary key,
+	[playlistTypeName] varchar(75) not null
+);
+
+CREATE TABLE [tblSONG_GROUP] (
+	[songGroupID] INTEGER IDENTITY(1,1) primary key,
+	[songID] INT FOREIGN KEY REFERENCES tblSONG (songID) not null,
+	[groupID] INT FOREIGN KEY REFERENCES tblGROUP (groupID) not null
+);
+
+CREATE TABLE [tblRECORDING] (
+	[recordingID] INTEGER IDENTITY(1,1) primary key,
+	[songGroupID] INT FOREIGN KEY REFERENCES tblSONG_GROUP (songGroupID) not null,
+	[genreID] INT FOREIGN KEY REFERENCES tblGENRE (genreID) not null,
+	[recordingRatingID] INT FOREIGN KEY REFERENCES tblRECORDING_RATING (recordingRatingID) not null,
+	[recordingLength] Time not null
+);
+
+CREATE TABLE [tblCUSTOMER] (
+	[custID] INTEGER IDENTITY(1,1) primary key,
+	[custTypeID] INT FOREIGN KEY REFERENCES tblCUSTOMER_TYPE (custTypeID) not null,
+	[custFName] varchar(75) not null,
+	[custLName] varchar(75) not null,
+	[custDOB] Date not null,
+	[custAddress] varchar(100) not null,
+	[custState] varchar(2) not null,
+	[custZip] varchar(75) not null,
+	[custLanguage] varchar(2) not null,
+	[custPic] varchar(500) NULL
+);
+
+
+CREATE TABLE [tblDEVICE] (
+	[deviceID] INTEGER IDENTITY(1,1) primary key,
+	[deviceTypeID]  INT FOREIGN KEY REFERENCES tblDEVICE_TYPE (deviceTypeID) not null,
+	[deviceName] varchar(75) not null
+);
+
+
+CREATE TABLE [tblCUSTOMER_DEVICE] (
+	[custDeviceID] INTEGER IDENTITY(1,1) primary key,
+	[custID] INT FOREIGN KEY REFERENCES tblCUSTOMER (custID) not null,
+	[deviceID] INT FOREIGN KEY REFERENCES tblDEVICE (deviceID) not null
+);
+
+CREATE TABLE [tblRECORDING_ALBUM] (
+	[recordingAlbumID] INTEGER IDENTITY(1,1) primary key,
+	[recordingID] INT FOREIGN KEY REFERENCES tblRECORDING (recordingID) not null,
+	[albumID] INT FOREIGN KEY REFERENCES tblALBUM (albumID) not null
+);
+
+CREATE TABLE [tblGROUP_MEMBER] (
+	[groupMemberID] INTEGER IDENTITY(1,1) primary key,
+	[groupID] INT FOREIGN KEY REFERENCES tblGROUP (groupID) not null,
+	[artistID] INT FOREIGN KEY REFERENCES tblARTIST (artistID) not null,
+	[roleID] INT FOREIGN KEY REFERENCES tblROLE (roleID) not null,
+);
+
+CREATE TABLE [tblPLAYLIST] (
+	[playlistID] INTEGER IDENTITY(1,1) primary key,
+	[playlistTypeID] INT FOREIGN KEY REFERENCES tblPLAYLIST_TYPE (playlistTypeID) not null,
+	[playlistName] varchar(75) not null,
+	[playlistDescr] varchar(500) NULL
+);
+
+CREATE TABLE [tblCUSTOMER_PLAYLIST] (
+	[customerPlaylistID] INTEGER IDENTITY(1,1) primary key,
+	[custID] INT FOREIGN KEY REFERENCES tblCUSTOMER (custID) not null,
+	[playlistID] INT FOREIGN KEY REFERENCES tblPLAYLIST (playlistID) not null,
+);
+
+CREATE TABLE [tblEVENT] (
+	[eventID] INTEGER IDENTITY(1,1) primary key,
+	[recordingID] INT FOREIGN KEY REFERENCES tblRECORDING (recordingID) not null,
+	[eventTypeID] INT FOREIGN KEY REFERENCES tblEVENT_TYPE (eventTypeID) not null,
+	[custID] INT FOREIGN KEY REFERENCES tblCUSTOMER (custID) not null,
+	[eventDate] DATE not null
+);*/

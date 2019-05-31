@@ -26,7 +26,7 @@ WHERE PT.playlistTypeName = 'Private'
 		FROM tblEVENT_TYPE ET
 			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
 			JOIN tblCUSTOMER C ON E.custID = C.custID
-		WHERE ET.eventTypeName LIKE 'addToPlayList%' + P.playListID
+		WHERE ET.eventTypeName LIKE 'addToPlayList%' + P.playlistID
 	)
 
 -- Find adds to playlist
@@ -46,19 +46,41 @@ AS
 BEGIN
 	DECLARE @Ret varchar(75) = (
 		SELECT genreName FROM (
-		SELECT TOP 1 G.genreName, COUNT(*) as Count
-		FROM tblALBUM A
-			JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
-			JOIN tblRECORDING R ON RA.recordingID = R.recordingID
-			JOIN tblGENRE G ON R.genreID = G.genreID
-		GROUP BY G.genreName
-		ORDER BY Count DESC
+			SELECT TOP 1 G.genreName, COUNT(*) as Count
+			FROM tblALBUM A
+				JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
+				JOIN tblRECORDING R ON RA.recordingID = R.recordingID
+				JOIN tblGENRE G ON R.genreID = G.genreID
+			GROUP BY G.genreName
+			ORDER BY Count DESC
 		) as sbq
 	)
 	RETURN @Ret
 END
 GO
 
+-- Find user’s favorite playlist (playlist with the most liked songs in them, the user must have liked the song)
+-- Takes in customer id and returns favorite playlist id
+CREATE FUNCTION fn_FavoritePlaylist(@PK INT)
+RETURNS INT
+AS
+BEGIN
+	DECLARE @Ret INT = (
+		SELECT playlistID FROM (
+			SELECT TOP 1 P.playlistID, COUNT(*) as Count
+			FROM tblPLAYLIST P
+				JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+				JOIN tblCUSTOMER C ON CP.custID = C.custID
+				JOIN tblEVENT E ON C.custID = E.custID
+				JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+			WHERE ET.eventTypeName = 'like'
+			GROUP BY P.playlistID
+			ORDER BY Count DESC
+		) as sbq
+	)
+	RETURN @Ret
+END
+GO
 
 -- Insert into tblSONG_GROUP
 CREATE PROCEDURE usp_INSERT_tblSONG_GROUP

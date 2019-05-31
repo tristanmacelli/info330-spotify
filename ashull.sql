@@ -1,5 +1,8 @@
 USE Group8_Spotify
+SELECT * FROM tblDEVICE_TYPE
+
 -- Can only add to your own playlist (Amelia)
+/*
 CREATE FUNCTION fn_RestrictPlaylistAdditions()
 RETURNS INT
 AS
@@ -12,9 +15,9 @@ BEGIN
 		SET @Ret = 1
 	END
 END
-GO
+GO*/
 
--- Find private playlists
+-- Find private playlists where the the event
 SELECT *
 FROM tblPLAYLIST_TYPE PT
 	JOIN tblPLAYLIST P ON PT.playlistTypeID = P.playlistTypeID
@@ -26,7 +29,7 @@ WHERE PT.playlistTypeName = 'Private'
 		FROM tblEVENT_TYPE ET
 			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
 			JOIN tblCUSTOMER C ON E.custID = C.custID
-		WHERE ET.eventTypeName LIKE 'addToPlayList%' + P.playlistID
+		WHERE ET.eventTypeName LIKE 'addToPlayList%' + CAST(P.playlistID AS VARCHAR(100))
 	)
 
 -- Find adds to playlist
@@ -35,8 +38,6 @@ FROM tblEVENT_TYPE ET
 	JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
 	JOIN tblCUSTOMER C ON E.custID = C.custID
 WHERE ET.eventTypeName LIKE 'addToPlayList%'
-
-
 
 -- Find genre of most songs
 -- Pretty sure this works, test with data :)

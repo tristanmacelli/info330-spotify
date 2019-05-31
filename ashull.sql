@@ -1,4 +1,44 @@
 USE Group8_Spotify
+-- Can only add to your own playlist (Amelia)
+CREATE FUNCTION fn_RestrictPlaylistAdditions()
+RETURNS INT
+AS
+BEGIN
+	DECLARE @Ret INT = 0
+	IF EXISTS (
+		SELECT *
+		FROM tblPLAYLIST_TYPE PT
+			JOIN tblPLAYLIST P ON PT.playlistTypeID P.playlistTypeID
+			JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+			JOIN tblCUSTOMER C ON CP.custID = C.custID
+			JOIN tblEVENT E ON C.custID = E.custID
+			JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+		WHERE PT.playlistTypeName = 'Private'
+	)
+	BEGIN
+		SET @Ret = 1
+	END
+END
+GO
+
+-- Find genre of most songs
+CREATE FUNCTION fn_ComputeAlbumGenre(@PK INT)
+RETURNS varchar(75)
+AS
+BEGIN
+	DECLARE @Ret varchar(75) = (
+		SELECT G.genreName, COUNT(*) as Count
+		FROM tblALBUM A
+			JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
+			JOIN tblRECORDING R ON RA.recordingID = R.recordingID
+			JOIN tblGENRE G ON R.genreID = G.genreID
+		GROUP BY G.genreName
+		ORDER BY Count
+	)
+END
+GO
+
+
 -- Insert into tblSONG_GROUP
 CREATE PROCEDURE usp_INSERT_tblSONG_GROUP
 @SongName varchar(75),

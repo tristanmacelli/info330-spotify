@@ -6,14 +6,7 @@ AS
 BEGIN
 	DECLARE @Ret INT = 0
 	IF EXISTS (
-		SELECT *
-		FROM tblPLAYLIST_TYPE PT
-			JOIN tblPLAYLIST P ON PT.playlistTypeID P.playlistTypeID
-			JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
-			JOIN tblCUSTOMER C ON CP.custID = C.custID
-			JOIN tblEVENT E ON C.custID = E.custID
-			JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-		WHERE PT.playlistTypeName = 'Private'
+
 	)
 	BEGIN
 		SET @Ret = 1
@@ -21,20 +14,48 @@ BEGIN
 END
 GO
 
+-- Find private playlists
+SELECT *
+FROM tblPLAYLIST_TYPE PT
+	JOIN tblPLAYLIST P ON PT.playlistTypeID = P.playlistTypeID
+	JOIN tblCUSTOMER_PLAYLIST CP ON P.playListID = CP.playListID
+	JOIN tblCUSTOMER C ON CP.custID = C.custID
+WHERE PT.playlistTypeName = 'Private'
+	AND C.custID NOT IN (
+		SELECT E.eventID
+		FROM tblEVENT_TYPE ET
+			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
+			JOIN tblCUSTOMER C ON E.custID = C.custID
+		WHERE ET.eventTypeName LIKE 'addToPlayList%' + P.playListID
+	)
+
+-- Find adds to playlist
+SELECT *
+FROM tblEVENT_TYPE ET
+	JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
+	JOIN tblCUSTOMER C ON E.custID = C.custID
+WHERE ET.eventTypeName LIKE 'addToPlayList%'
+
+
+
 -- Find genre of most songs
+-- Pretty sure this works, test with data :)
 CREATE FUNCTION fn_ComputeAlbumGenre(@PK INT)
 RETURNS varchar(75)
 AS
 BEGIN
 	DECLARE @Ret varchar(75) = (
-		SELECT G.genreName, COUNT(*) as Count
+		SELECT genreName FROM (
+		SELECT TOP 1 G.genreName, COUNT(*) as Count
 		FROM tblALBUM A
 			JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
 			JOIN tblRECORDING R ON RA.recordingID = R.recordingID
 			JOIN tblGENRE G ON R.genreID = G.genreID
 		GROUP BY G.genreName
-		ORDER BY Count
+		ORDER BY Count DESC
+		) as sbq
 	)
+	RETURN @Ret
 END
 GO
 

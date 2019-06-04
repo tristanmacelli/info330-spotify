@@ -184,31 +184,31 @@ EXEC usp_INSERT_tblSONG
 
 -- Need to run group code
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Justin Bieber',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName  = 'Justin Bieber',
+@groupBio  = '',
+@groupPic  = ''
 
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Travis Scott',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName = 'Travis Scott',
+@groupBio = '',
+@groupPic = ''
 
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Snoop Dogg',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName = 'Snoop Dogg',
+@groupBio = '',
+@groupPic = ''
 
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Cardi B',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName  = 'Cardi B',
+@groupBio = '',
+@groupPic  = ''
 
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Drake Graham',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName = 'Drake Graham',
+@groupBio  = '',
+@groupPic = ''
 
 EXEC usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Justin Bieber',
-@groupBio varchar(500) = '',
-@groupPic varchar(500) = NULL
+@groupName = 'Justin Bieber',
+@groupBio  = '',
+@groupPic = ''

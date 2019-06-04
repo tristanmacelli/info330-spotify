@@ -26,6 +26,7 @@ INSERT INTO tblSONG_GROUP(songID, groupID)
 VALUES(@SongID, @GroupID)
 GO
 
+
 -- Insert into tblGROUP_MEMBER
 CREATE PROCEDURE usp_INSERT_tblGROUP_MEMBER
 @GroupName varchar(75),
@@ -55,6 +56,10 @@ DECLARE @RoleID INT = (
 INSERT INTO tblGROUP_MEMBER(groupID, artistID, roleID)
 VALUES(@GroupID, @ArtistID, @RoleID)
 GO
+
+
+
+SELECT * FROM tblARTIST
 
 -- Insert into tblEVENT
 CREATE PROCEDURE usp_INSERT_tblEVENT
@@ -270,10 +275,9 @@ INSERT INTO tblSONG (songName)
 VALUES (@songName)
 GO
 
-SELECT * FROM tblGROUP
 
 -- Insert into tblGROUP
-SELECT * FROM tblGROUP
+-- Data entered
 CREATE PROCEDURE usp_INSERT_tblGROUP
 @groupName varchar(75),
 @groupBio varchar(500),

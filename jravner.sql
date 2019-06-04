@@ -1,5 +1,6 @@
 -- Joey's SQL Code
-
+USE Group8_Spotify
+GO
 -- Transactional Table Stored Procedures
 -- tblEVENT, tblCUSTOMER_DEVICE
 CREATE PROCEDURE usp_INSERT_tblEVENT
@@ -22,13 +23,13 @@ DECLARE @C_ID INT = (
     AND custDOB = @custDOB
 )
 DECLARE @R_ID INT = (
-  SELECT recordingID
+  SELECT R.recordingID
   FROM tblRECORDING R
     JOIN tblSONG_GROUP SG ON R.songGroupID = SG.songGroupID
     JOIN tblSONG S ON SG.songID = S.songID
     JOIN tblGROUP G ON SG.groupID = G.groupID
     JOIN tblRECORDING_ALBUM RA ON R.recordingID = RA.recordingID
-    JOIN tblALBUM ON RA.albumID = A.albumID
+    JOIN tblALBUM A ON RA.albumID = A.albumID
   WHERE S.songName = @songName
     AND G.groupName = @groupName
     AND A.albumName = @albumName
@@ -114,14 +115,14 @@ BEGIN
     WHERE CT.custTypeName  = 'Free'
       AND PT.playlistTypeName = 'Private'
   ) BEGIN
-    @Ret = 1
+    SET @Ret = 1
   END
 
-RETRUN @Ret
+RETURN @Ret
 END
 GO
 
-ALTER TABLE tblPLAYLIST
+ALTER TABLE tblPLAYLIST -- Won't Alter
 ADD CONSTRAINT ck_noPrivatePlaylistFreeUsers
 CHECK (dbo.fn_noPrivateFreeUsers() = 0)
 GO
@@ -134,7 +135,7 @@ AS
 BEGIN
 
 DECLARE @Ret Time = (
-  SELECT SUM(R.recordingLength)
+  SELECT SUM(R.recordingLength) --Can't Sum Time
   FROM tblCUSTOMER C
     JOIN tblEVENT E ON C.custID = E.custID
     JOIN tblRECORDING R ON E.recordingID = R.recordingID
@@ -162,3 +163,52 @@ FROM tblGROUP G
 WHERE G.genreName = 'Jazz'
   AND E.eventDate BETWEEN 'January 1, 2012' AND 'December 31, 2015'
 GROUP BY G.groupName
+GO
+
+-- Add to Look Up Tables
+EXEC usp_INSERT_tblSONG
+@songName = 'Love Yourself'
+
+EXEC usp_INSERT_tblSONG
+@songName = 'Drop It Like Its Hot'
+
+EXEC usp_INSERT_tblSONG
+@songName = 'I Like It'
+
+EXEC usp_INSERT_tblSONG
+@songName = 'Goosebumps'
+
+EXEC usp_INSERT_tblSONG
+@songName = 'Foreword'
+
+
+-- Need to run group code
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Justin Bieber'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Travis Scott'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Snoop Dogg'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Cardi B'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Drake Graham'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Justin Bieber'
+@groupBio varchar(500) = ''
+@groupPic varchar(500) = NULL

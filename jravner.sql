@@ -183,32 +183,32 @@ EXEC usp_INSERT_tblSONG
 
 
 -- Need to run group code
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Justin Bieber'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Justin Bieber',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL
 
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Travis Scott'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Travis Scott',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL
 
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Snoop Dogg'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Snoop Dogg',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL
 
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Cardi B'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Cardi B',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL
 
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Drake Graham'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Drake Graham',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL
 
-CREATE PROCEDURE usp_INSERT_tblGROUP
-@groupName varchar(75) = 'Justin Bieber'
-@groupBio varchar(500) = ''
+EXEC usp_INSERT_tblGROUP
+@groupName varchar(75) = 'Justin Bieber',
+@groupBio varchar(500) = '',
 @groupPic varchar(500) = NULL

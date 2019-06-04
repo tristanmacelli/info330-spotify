@@ -132,7 +132,7 @@ FROM tblCUSTOMER C
 	JOIN tblEVENT E ON C.custID = E.custID
 	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
 WHERE CT.custTypeName = 'Premium'
-	AND ET.eventTypeName = 'Register'
+	AND ET.eventTypeName = 'register'
 	AND E.eventDate BETWEEN 'January 1, 2010' AND 'December 31, 2014'
 	AND C.custDOB <= (SELECT GetDate()) - 18	
 GROUP BY C.custID, C.custFName, C.custLName

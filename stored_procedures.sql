@@ -2,8 +2,7 @@
  * 
  * Stored Produres compiled into one doc
  * 
- */ 
-
+ */
 -- Insert into tblSONG_GROUP
 CREATE PROCEDURE usp_INSERT_tblSONG_GROUP
 @SongName varchar(75),
@@ -56,10 +55,6 @@ DECLARE @RoleID INT = (
 INSERT INTO tblGROUP_MEMBER(groupID, artistID, roleID)
 VALUES(@GroupID, @ArtistID, @RoleID)
 GO
-
-
-
-SELECT * FROM tblARTIST
 
 -- Insert into tblEVENT
 CREATE PROCEDURE usp_INSERT_tblEVENT
@@ -128,6 +123,7 @@ DECLARE @C_ID INT = (
 INSERT INTO tblCUSTOMER_DEVICE (custID, deviceID)
 VALUES (@C_ID, @D_ID)
 GO
+
 
 -- Instert into tblCUSTOMER
 CREATE PROCEDURE usp_CREATE_CUSTOMER
@@ -219,8 +215,70 @@ COMMIT TRAN T1
 GO
 
 
--- INSERT AKOLY'S PROCEDURES HERE --
+-- Insert into tblRECORDING
+CREATE PROCEDURE usp_INSERT_RECORDING
+@GenreName varchar (100),
+@SongName varchar(100),
+@GroupName varchar(100),
+@RatingName varchar(100),
+@RecordLength time(7)
 
+AS 
+
+DECLARE @songGroupID INT
+DECLARE @genreID INT
+DECLARE @recordingRatingID INT
+
+SET @songGroupID = (SELECT SG.songGroupID 
+					FROM tblSONG S
+					JOIN tblSONG_GROUP SG ON S.songID = SG.songID
+					WHERE S.songName = @SongName)
+
+SET @genreID = (SELECT G.genreID
+				FROM tblGENRE G 
+				WHERE G.genreName = @GenreName)
+				
+SET @recordingRatingID = (SELECT RR.recordingRatingID 
+						 FROM tblRECORDING_RATING RR
+						 WHERE RR.ratingName = @RatingName)
+
+BEGIN TRAN G1
+INSERT INTO tblRECORDING(songGroupID,genreID, recordingRatingID, recordingLength)
+VALUES (@songGroupID, @genreID, @recordingRatingID, @RecordLength)
+COMMIT TRAN G1
+GO 
+
+-- Insert into tblRECORDING_ALBUM
+CREATE PROCEDURE usp_INSERT_RECORDING_ALBUM
+@AlbumName varchar (75),
+@AlbumLabel varchar(75),
+@AlbumRelease DATE,
+@SongName varchar(75),
+@RecordingGenre varchar(75)
+
+AS 
+
+DECLARE @recordingID INT
+DECLARE @albumID INT
+
+SET @recordingID = (SELECT R.recordingID 
+					FROM tblRECORDING R
+						JOIN tblSONG_GROUP SG ON R.songGroupID = SG.songGroupID
+						JOIN tblSONG S ON SG.songID = S.songID
+						JOIN tblGENRE G ON R.genreID = G.genreID
+					WHERE S.songName = @SongName
+					AND G.genreName = @RecordingGenre)
+
+SET @albumID = (SELECT A.albumID 
+				FROM tblALBUM A
+				WHERE A.albumName = @AlbumName
+				AND A.albumReleaseDate = @AlbumRelease
+				AND A.albumLabel = @AlbumLabel)
+				
+BEGIN TRAN G1
+INSERT INTO tblRECORDING_ALBUM(recordingID, albumID)
+VALUES(@recordingID, @albumID)
+COMMIT TRAN G1
 
 /*
  * 

@@ -2,8 +2,8 @@ USE Group8_Spotify
 
 EXEC usp_CREATE_CUSTOMER
 @typeName = 'Free',
-@fName = '',
-@lName = '',
+@fName = 'Robbie',
+@lName = 'Lin',
 @dob = '1997-09-28',
 @address = '12345 67th AVE NE',
 @city = 'Seattle',
@@ -14,11 +14,11 @@ EXEC usp_CREATE_CUSTOMER
 
 
 EXEC usp_INSERT_tblPLAYLIST_AND_tblCUSTOMER_PLAYLIST
-@PlaylistName = '',
-@Descr = '',
+@PlaylistName = 'Robbies Playlist',
+@Descr = 'Cool music for a cool dude',
 @PlaylistTypeName = 'Public',
-@CustFName = '',
-@CustLName = '',
+@CustFName = 'Robbie',
+@CustLName = 'Lin',
 @DOB = '1997-09-28'
 
 
@@ -27,10 +27,10 @@ EXEC usp_INSERT_tblEVENT
 @songName = 'Love Yourself',
 @albumName = 'Purpose (Deluxe)',
 @eventTypeName = 'addToPlaylist',
-@playlistName = '',
-@custFName = '',
-@custLName = '',
-@custDOB = '',
+@playlistName = 'Robbies Playlist',
+@custFName = 'Robbie',
+@custLName = 'Lin',
+@custDOB = '1997-09-28',
 @eventDate = '2019-06-04'
 
 -- computed columns --

@@ -13,13 +13,14 @@ EXEC usp_CREATE_CUSTOMER
 @pic = 'https://www.pic.com'
 
 
-EXEC usp_INSERT_tblPLAYLIST_BY_CUST
-@Name = '',
+EXEC usp_INSERT_tblPLAYLIST_AND_tblCUSTOMER_PLAYLIST
+@PlaylistName = '',
 @Descr = '',
-@PlaylistTypeName = 'Private',
+@PlaylistTypeName = 'Public',
 @CustFName = '',
-@CustLName = ''
+@CustLName = '',
 @DOB = '1997-09-28'
+
 
 EXEC usp_INSERT_tblEVENT
 @groupName = 'Justin Bieber',

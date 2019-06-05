@@ -2,20 +2,33 @@ USE Group8_Spotify
 SELECT * FROM tblDEVICE_TYPE
 
 -- Can only add to your own playlist (Amelia)
-/*
+
 CREATE FUNCTION fn_RestrictPlaylistAdditions()
 RETURNS INT
 AS
 BEGIN
 	DECLARE @Ret INT = 0
 	IF EXISTS (
-
+		SELECT *
+		FROM tblPLAYLIST_TYPE PT
+			JOIN tblPLAYLIST P ON PT.playlistTypeID = P.playlistTypeID
+			JOIN tblCUSTOMER_PLAYLIST CP ON P.playListID = CP.playListID
+			JOIN tblCUSTOMER C ON CP.custID = C.custID
+		WHERE PT.playlistTypeName = 'Private'
+			AND C.custID NOT IN (
+				SELECT E.eventID
+				FROM tblEVENT_TYPE ET
+					JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
+					JOIN tblCUSTOMER C ON E.custID = C.custID
+				WHERE ET.eventTypeName LIKE 'addToPlayList%' + CAST(P.playlistID AS VARCHAR(100))
+			)
 	)
 	BEGIN
 		SET @Ret = 1
 	END
+	RETURN @Ret
 END
-GO*/
+GO
 
 -- Find private playlists where the the event
 SELECT *
@@ -33,27 +46,28 @@ WHERE PT.playlistTypeName = 'Private'
 	)
 
 -- Find adds to playlist
-SELECT *
-FROM tblEVENT_TYPE ET
-	JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
-	JOIN tblCUSTOMER C ON E.custID = C.custID
-WHERE ET.eventTypeName LIKE 'addToPlayList%'
+		SELECT E.eventID
+		FROM tblEVENT_TYPE ET
+			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
+			JOIN tblCUSTOMER C ON E.custID = C.custID
+		WHERE ET.eventTypeName LIKE 'addToPlayList9'
+
 
 -- Find genre of most songs
--- Pretty sure this works, test with data :)
 CREATE FUNCTION fn_ComputeAlbumGenre(@PK INT)
 RETURNS varchar(75)
 AS
 BEGIN
 	DECLARE @Ret varchar(75) = (
 		SELECT genreName FROM (
-			SELECT TOP 1 G.genreName, COUNT(*) as Count
-			FROM tblALBUM A
-				JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
-				JOIN tblRECORDING R ON RA.recordingID = R.recordingID
-				JOIN tblGENRE G ON R.genreID = G.genreID
-			GROUP BY G.genreName
-			ORDER BY Count DESC
+		SELECT TOP 1 G.genreName, COUNT(*) as Count
+		FROM tblALBUM A
+			JOIN tblRECORDING_ALBUM RA ON A.albumID = RA.albumID
+			JOIN tblRECORDING R ON RA.recordingID = R.recordingID
+			JOIN tblGENRE G ON R.genreID = G.genreID
+		WHERE A.albumID = @PK
+		GROUP BY G.genreName
+		ORDER BY Count DESC
 		) as sbq
 	)
 	RETURN @Ret

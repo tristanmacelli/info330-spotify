@@ -188,9 +188,9 @@ RETURN @Ret
 END
 GO
 
-ALTER TABLE tblCUSTOMER -- Won't Alter
+ALTER TABLE tblCUSTOMER
 ADD CONSTRAINT ck_noExplicitUnder18
-CHECK (dbo.fn_noExplicitUnder18 = 0)
+CHECK (dbo.fn_noExplicitUnder18() = 0)
 GO
 
 

@@ -79,7 +79,7 @@ GO
 
 --- SELECT dbo.fn_noExplicitUnder18 ()
 
-ALTER TABLE tblCUSTOMER -- Won't Alter
+ALTER TABLE tblCUSTOMER 
 ADD CONSTRAINT ck_noExplicitUnder18
 CHECK (dbo.fn_noExplicitUnder18() = 0)
 GO
@@ -107,7 +107,7 @@ RETURN @Ret
 END
 GO
 
-ALTER TABLE tblCUSTOMER -- Won't Alter
+ALTER TABLE tblCUSTOMER 
 ADD CONSTRAINT ck_noAccountUnder13
 CHECK (dbo.fn_noAccountUnder13 () = 0)
 

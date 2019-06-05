@@ -160,7 +160,38 @@ VALUES(@recordingID, @albumID)
 COMMIT TRAN G1
 
 
+-- Restriction/Business Rule --
+-- Must be >=18 to listen to explicit song/album --
+CREATE FUNCTION fn_noExplicitUnder18 ()
+RETURNS INT
+AS
+BEGIN
 
+  DECLARE @Ret INT = 0
+
+  IF EXISTS (
+    SELECT C.custDOB
+    FROM tblCUSTOMER C
+      JOIN tblEvent E ON C.custID = E.custID
+      JOIN tblRECORDING R ON E.recordingID = R.recordingID
+      JOIN tblRECORDING_RATING RR ON R.recordingRatingID = RR.recordingRatingID
+      JOIN tblRECORDING_ALBUM RA ON R.recordingID = RA.recordingID
+      JOIN tblALBUM A ON RA.albumID = A.albumID
+    WHERE A.AlbumRating  = 'Explicit'
+      AND RR.ratingName = 'Explicit'
+      AND C.custDOB >= (SELECT GETDATE() - (365.25 * 18))
+  ) BEGIN
+    SET @Ret = 1
+  END
+
+RETURN @Ret
+END
+GO
+
+ALTER TABLE tblCUSTOMER -- Won't Alter
+ADD CONSTRAINT ck_noExplicitUnder18
+CHECK (dbo.fn_noExplicitUnder18 = 0)
+GO
 
 
 

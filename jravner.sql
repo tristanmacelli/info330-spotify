@@ -130,12 +130,12 @@ GO
 -- Computed Column
 -- Time listened / user
 CREATE FUNCTION fn_timeListenedPerUser (@PK INT)
-RETURNS Time
+RETURNS numeric(8,2)
 AS
 BEGIN
 
-DECLARE @Ret Time = (
-  SELECT SUM(R.recordingLength) --Can't Sum Time
+DECLARE @Ret numeric(8,2) = (
+  SELECT (CAST(SUM(DATEDIFF(SECOND, '0:00:00', recordingLength)) AS numeric(8,2)) / 60)
   FROM tblCUSTOMER C
     JOIN tblEVENT E ON C.custID = E.custID
     JOIN tblRECORDING R ON E.recordingID = R.recordingID
@@ -160,7 +160,7 @@ FROM tblGROUP G
   JOIN tblGENRE GR ON R.genreID = GR.genreID
   JOIN tblEVENT E ON R.recordingID = E.recordingID
   JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-WHERE G.genreName = 'Jazz'
+WHERE GR.genreName = 'Jazz'
   AND E.eventDate BETWEEN 'January 1, 2012' AND 'December 31, 2015'
 GROUP BY G.groupName
 GO
@@ -212,3 +212,4 @@ EXEC usp_INSERT_tblGROUP
 @groupName = 'Justin Bieber',
 @groupBio  = '',
 @groupPic = ''
+

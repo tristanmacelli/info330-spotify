@@ -85,7 +85,7 @@ GO
 
 -- Query --
 /*
-	Find all premium customers who registered between 2010 and 2014, who are also at least 18 years old 
+	Find all premium customers who registered between 2010 and 2019, who are also at least 18 years old 
 */
 SELECT C.custID, C.custFName, C.custLName
 FROM tblCUSTOMER C
@@ -94,9 +94,7 @@ FROM tblCUSTOMER C
 	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
 WHERE CT.custTypeName = 'Premium'
 	AND ET.eventTypeName = 'register'
-	AND E.eventDate BETWEEN 'January 1, 2010' AND 'December 31, 2014'
-	AND C.custDOB <= (SELECT GetDate()) - 18	
+	AND E.eventDate BETWEEN 'January 1, 2010' AND 'December 31, 2019'
+	AND C.custDOB <= (SELECT GETDATE() - (365.25 * 18))	
 GROUP BY C.custID, C.custFName, C.custLName
 GO
-
-

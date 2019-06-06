@@ -194,6 +194,34 @@ CHECK (dbo.fn_noExplicitUnder18() = 0)
 GO
 
 
+-- Computed Columns for Playlist Length -- 
+CREATE FUNCTION fn_PlayListLength(@PK INT)
+RETURNS INT
+AS 
+BEGIN
+	DECLARE @Ret INT = (SELECT COUNT(*)
+						FROM 
+END
+
+
+-- Query --
+-- Write a SQL query to determine the most popular/most listened to song by Justin Bieber
+-- in the year 2019
+SELECT TOP 1 A.ArtistFname, A.ArtistLName, S.SongName, COUNT(ET.eventTypeName) AS Listens
+FROM tblARTIST A 
+	JOIN tblGROUP_MEMBER GM ON A.artistID = A.artistID
+	JOIN tblGROUP G ON GM.groupID = G.groupID
+	JOIN tblSONG_GROUP SG ON G.groupID = SG.groupID
+	JOIN tblSONG S ON SG.songID = S.songID
+	JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
+	JOIN tblEVENT E ON R.recordingID = E.recordingID
+	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+WHERE A.artistFName = 'Justin'
+  AND A.artistLName = 'Bieber'
+  AND E.eventDate BETWEEN 'January 1, 2019' AND 'December 31, 2019'
+  AND ET.eventTypeName = 'play'
+GROUP BY A.artistFName, A.ArtistLName, S.SongName
+GO
 
 
 

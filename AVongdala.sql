@@ -194,15 +194,27 @@ CHECK (dbo.fn_noExplicitUnder18() = 0)
 GO
 
 
--- Computed Columns for Playlist Length -- 
+-- Computed Column for Playlist Length -- 
 CREATE FUNCTION fn_PlayListLength(@PK INT)
-RETURNS INT
+RETURNS NUMERIC(8,2)
 AS 
 BEGIN
-	DECLARE @Ret INT = (SELECT COUNT(*)
-						FROM 
-END
+	DECLARE @Ret NUMERIC(8,2) = (SELECT (CAST(SUM(DATEDIFF(SECOND, '0:00:00', R.recordingLength)) AS numeric(8,2)) / 60)
+	FROM tblPLAYLIST P 
+		JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+		JOIN tblCUSTOMER C ON CP.custID = C.custID
+		JOIN tblEVENT E ON C.custID = E.custID
+		JOIN tblRECORDING R ON E.recordingID = R.recordingID
+	WHERE C.custID = @PK)
 
+RETURN @Ret
+END
+GO 
+
+ALTER TABLE tblCUSTOMER
+ADD playListLength AS (dbo.fn_PlayListLength(custID))
+GO
+							
 
 -- Query --
 -- Write a SQL query to determine the most popular/most listened to song by Justin Bieber

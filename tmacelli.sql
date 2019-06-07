@@ -1,4 +1,4 @@
-USE Group8_Spotify
+﻿USE Group8_Spotify
 GO
 
 /*
@@ -74,22 +74,20 @@ GO
 	Description: Can’t add the same recording to a playlist more than once
 */
 
-CREATE FUNCTION ck_NoPlaylistDuplicates(@PlaylistID INT, @RecordingID INT)
+CREATE FUNCTION ck_NoPlaylistDuplicates()
 RETURNS INT
 AS
 BEGIN
 DECLARE @Ret INT = 0
 		IF EXISTS(SELECT *
-				  FROM tblPLAYLIST P
-					JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
-					JOIN tblCUSTOMER C ON CP.custID = C.custID
-					JOIN tblEVENT E ON C.custID = E.custID
-					JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-					JOIN tblRECORDING R ON E.recordingID = R.recordingID
-				  WHERE ET.eventTypeName LIKE 'addToPlayList%'
-						AND P.playlistID = @PlaylistID
-						AND R.recordingID = @RecordingID 
-				  GROUP BY P.playlistID
+			  FROM tblPLAYLIST P
+			  	JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+				JOIN tblCUSTOMER C ON CP.custID = C.custID
+				JOIN tblEVENT E ON C.custID = E.custID
+				JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+				JOIN tblRECORDING R ON E.recordingID = R.recordingID
+			  WHERE (SELECT SUBSTRING(ET.eventTypeName, 14 , LEN(ET.eventTypeName))) IN (SELECT P.playListID FROM tblPLAYLIST P)
+			  GROUP BY P.playlistID				  
 		)
 		BEGIN
 			SET @Ret = 1

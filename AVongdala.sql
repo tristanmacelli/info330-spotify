@@ -194,6 +194,46 @@ CHECK (dbo.fn_noExplicitUnder18() = 0)
 GO
 
 
+-- Computed Column for Playlist Length -- 
+CREATE FUNCTION fn_PlayListLength(@PK INT)
+RETURNS NUMERIC(8,2)
+AS 
+BEGIN
+	DECLARE @Ret NUMERIC(8,2) = (SELECT (CAST(SUM(DATEDIFF(SECOND, '0:00:00', R.recordingLength)) AS numeric(8,2)) / 60)
+	FROM tblPLAYLIST P 
+		JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+		JOIN tblCUSTOMER C ON CP.custID = C.custID
+		JOIN tblEVENT E ON C.custID = E.custID
+		JOIN tblRECORDING R ON E.recordingID = R.recordingID
+	WHERE C.custID = @PK)
+
+RETURN @Ret
+END
+GO 
+
+ALTER TABLE tblCUSTOMER
+ADD playListLength AS (dbo.fn_PlayListLength(custID))
+GO
+							
+
+-- Query --
+-- Write a SQL query to determine the most popular/most listened to song by Justin Bieber
+-- in the year 2019
+SELECT TOP 1 A.ArtistFname, A.ArtistLName, S.SongName, COUNT(ET.eventTypeName) AS Listens
+FROM tblARTIST A 
+	JOIN tblGROUP_MEMBER GM ON A.artistID = A.artistID
+	JOIN tblGROUP G ON GM.groupID = G.groupID
+	JOIN tblSONG_GROUP SG ON G.groupID = SG.groupID
+	JOIN tblSONG S ON SG.songID = S.songID
+	JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
+	JOIN tblEVENT E ON R.recordingID = E.recordingID
+	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+WHERE A.artistFName = 'Justin'
+  AND A.artistLName = 'Bieber'
+  AND E.eventDate BETWEEN 'January 1, 2019' AND 'December 31, 2019'
+  AND ET.eventTypeName = 'play'
+GROUP BY A.artistFName, A.ArtistLName, S.SongName
+GO
 
 
 

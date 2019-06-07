@@ -54,6 +54,56 @@ BEGIN TRAN T1
 INSERT INTO tblCUSTOMER_PLAYLIST(custID, playlistID)
 VALUES(@C_ID, @P_ID)
 COMMIT TRAN T1
+GO
 
+-- business rule - no users under age of 13
+CREATE FUNCTION ck_noAccountUnder13()
+RETURNS INT
+AS
+BEGIN
+DECLARE @ret INT = 0
+IF EXISTS (SELECT *
+            FROM tblCUSTOMER C
+            WHERE C.custDOB > (SELECT GetDate() - (365.25 * 13)))
+            BEGIN
+                SET @ret = 1
+            END
+RETURN @ret
+END
+GO
 
+ALTER TABLE tblCUSTOMER
+ADD CONSTRAINT ck_noAccountUnder13
+CHECK (dbo.ck_noAccountUnder13() = 0)
 
+-- complex query select the top 100 most listened to songs
+SELECT TOP 100 S.songName, COUNT(E.eventID) AS "# of plays"
+FROM tblSONG S
+    JOIN tblSONG_GROUP SG ON S.SongID = SG.songID
+    JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
+    JOIN tblEVENT E ON R.recordingID = E.recordingID
+    JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+WHERE ET.eventTypeName = 'play'
+GROUP BY S.songName
+ORDER BY COUNT(E.eventID) DESC
+GO
+
+-- computed column, get the total # of listening time for a group
+CREATE FUNCTION fn_timeListenedGroup(@PK INT)
+RETURNS NUMERIC(8,2)
+AS
+BEGIN
+    DECLARE @Ret numeric(8,2) = (SELECT (CAST(SUM(DATEDIFF(SECOND, '0:00:00', R.recordingLength)) AS numeric(8,2)) / 60)
+                                FROM tblGROUP G
+                                    JOIN tblSONG_GROUP SG ON G.groupID = SG.groupID
+                                    JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
+                                    JOIN tblEVENT E ON R.recordingID = E.recordingID
+                                    JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+                                WHERE G.groupID = @PK AND ET.eventTypeName = 'play')
+RETURN @Ret
+END
+GO
+
+ALTER TABLE tblGROUP
+ADD totalTimeListenedTo AS (dbo.fn_timeListenedGroup(groupID))
+GO

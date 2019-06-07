@@ -71,29 +71,32 @@ GO
 
 /*
 	Business Rule
-	Description: Can’t add the same recording to a playlist more than once
+	Description: Free users cannot have more than 3 Devices linked to their account. 
 */
 
-CREATE FUNCTION ck_NoPlaylistDuplicates()
+CREATE FUNCTION fn_restrictDevicesFreeUsers()
 RETURNS INT
 AS
 BEGIN
 DECLARE @Ret INT = 0
-		IF EXISTS(SELECT *
-			  FROM tblPLAYLIST P
-			  	JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
-				JOIN tblCUSTOMER C ON CP.custID = C.custID
-				JOIN tblEVENT E ON C.custID = E.custID
-				JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-				JOIN tblRECORDING R ON E.recordingID = R.recordingID
-			  WHERE (SELECT SUBSTRING(ET.eventTypeName, 14 , LEN(ET.eventTypeName))) IN (SELECT P.playListID FROM tblPLAYLIST P)
-			  GROUP BY P.playlistID				  
+		IF EXISTS(SELECT C.custID
+				  FROM tblCUSTOMER_DEVICE CD
+					JOIN tblCUSTOMER C ON CD.custID = C.custID
+					JOIN tblCUSTOMER_TYPE CT ON C.custTypeID = CT.custTypeID
+				  WHERE CT.custTypeName = 'Free'
+				  GROUP BY C.custID
+				  HAVING COUNT(*) > 3
 		)
 		BEGIN
 			SET @Ret = 1
 		END
 	RETURN @Ret
 END
+GO
+
+ALTER TABLE tblCUSTOMER_DEVICE
+ADD CONSTRAINT ck_numDevicesFreeUsers
+CHECK (dbo.fn_restrictDevicesFreeUsers() = 0)
 GO
 
 /*

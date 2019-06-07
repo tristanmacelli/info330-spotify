@@ -205,14 +205,14 @@ BEGIN
 		JOIN tblCUSTOMER C ON CP.custID = C.custID
 		JOIN tblEVENT E ON C.custID = E.custID
 		JOIN tblRECORDING R ON E.recordingID = R.recordingID
-	WHERE C.custID = @PK)
+	WHERE P.playlistID = @PK)
 
 RETURN @Ret
 END
 GO 
 
-ALTER TABLE tblCUSTOMER
-ADD playListLength AS (dbo.fn_PlayListLength(custID))
+ALTER TABLE tblPLAYLIST
+ADD PlayListLength AS (dbo.fn_PlayListLength(playlistID))
 GO
 							
 

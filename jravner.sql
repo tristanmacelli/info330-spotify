@@ -40,8 +40,10 @@ DECLARE @ET_ID INT = (
   WHERE eventTypeName = @eventTypeName
 )
 
+BEGIN TRAN T1
 INSERT INTO tblEVENT (recordingID, eventTypeID, custID, eventDate)
 VALUES (@R_ID, @ET_ID, @C_ID, @eventDate)
+COMMIT TRAN T1
 GO
 
 CREATE PROCEDURE usp_INSERT_tblCUSTOMER_DEVICE
@@ -65,8 +67,10 @@ DECLARE @C_ID INT = (
     AND custDOB = @custDOB
 )
 
+BEGIN TRAN T1
 INSERT INTO tblCUSTOMER_DEVICE (custID, deviceID)
 VALUES (@C_ID, @D_ID)
+COMMIT TRAN T1
 GO
 
 -- Look-Up Table Stored Procedures
@@ -76,8 +80,10 @@ CREATE PROCEDURE usp_INSERT_tblSONG
 
 AS
 
+BEGIN TRAN T1
 INSERT INTO tblSONG (songName)
 VALUES (@songName)
+COMMIT TRAN T1
 GO
 
 CREATE PROCEDURE usp_INSERT_tblGROUP
@@ -87,8 +93,10 @@ CREATE PROCEDURE usp_INSERT_tblGROUP
 
 AS
 
+BEGIN TRAN T1
 INSERT INTO tblGROUP (groupName, groupBio, groupPic)
 VALUES (@groupName, @groupBio, @groupPic)
+COMMIT TRAN T1
 GO
 
 --Business Rule
@@ -122,7 +130,7 @@ RETURN @Ret
 END
 GO
 
-ALTER TABLE tblPLAYLIST -- Won't Alter
+ALTER TABLE tblPLAYLIST
 ADD CONSTRAINT ck_noPrivatePlaylistFreeUsers
 CHECK (dbo.fn_noPrivateFreeUsers() = 0)
 GO
@@ -151,17 +159,18 @@ ADD custTotalTimeListened AS (dbo.fn_timeListenedPerUser(custID))
 GO
 
 -- Query
--- Write the SQL query to list the top 3 groups who has the most listened
-    -- between 2012 and 2015, in Jazz.
-SELECT TOP 3 G.groupName, COUNT(E.eventID) AS Listens
+-- Write the SQL query to list the top group who has the most listened
+    -- between 2012 and 2019, in Pop.
+SELECT G.groupName, COUNT(E.eventID) AS Listens
 FROM tblGROUP G
   JOIN tblSONG_GROUP SG ON G.groupID = SG.groupID
   JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
   JOIN tblGENRE GR ON R.genreID = GR.genreID
   JOIN tblEVENT E ON R.recordingID = E.recordingID
   JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-WHERE GR.genreName = 'Jazz'
-  AND E.eventDate BETWEEN 'January 1, 2012' AND 'December 31, 2015'
+WHERE GR.genreName = 'Pop'
+  AND ET.eventTypeName = 'play'
+  AND E.eventDate BETWEEN 'January 1, 2012' AND 'December 31, 2019'
 GROUP BY G.groupName
 GO
 

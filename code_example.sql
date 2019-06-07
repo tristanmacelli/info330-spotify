@@ -13,6 +13,7 @@ EXEC usp_CREATE_CUSTOMER
 @pic = 'https://www.pic.com'
 
 
+
 EXEC usp_INSERT_tblPLAYLIST_AND_tblCUSTOMER_PLAYLIST
 @PlaylistName = 'Robbies Playlist',
 @Descr = 'Cool music for a cool dude',
@@ -130,6 +131,20 @@ EXEC usp_CREATE_CUSTOMER
 	Find all premium customers who are at least 18 years old, and have 'Love Yourself' in a playlist
 */
 SELECT C.custID, C.custFName, C.custLName
+<<<<<<< HEAD
+FROM tblCUSTOMER C
+	JOIN tblCUSTOMER_TYPE CT ON C.custTypeID = CT.custTypeID
+	JOIN tblEVENT E ON C.custID = E.custID
+	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+WHERE CT.custTypeName = 'Premium'
+	AND ET.eventTypeName = 'register'
+	AND E.eventDate BETWEEN 'January 1, 2010' AND 'December 31, 2019'
+	AND C.custDOB <= (SELECT GETDATE() - (365.25 * 18))	
+GROUP BY C.custID, C.custFName, C.custLName
+GO
+
+select * from tblEVENT
+=======
 FROM tblEVENT_TYPE ET
 	JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
 	JOIN tblRECORDING R ON E.recordingID = R.recordingID
@@ -147,3 +162,4 @@ WHERE S.songName = 'Love Yourself' AND (SELECT SUBSTRING(ET.eventTypeName, 14 , 
 	)
 )
 GO
+>>>>>>> 6618f939e2931e23112f583718a7ba23829e52e0

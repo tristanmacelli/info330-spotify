@@ -13,6 +13,7 @@ EXEC usp_CREATE_CUSTOMER
 @pic = 'https://www.pic.com'
 
 
+
 EXEC usp_INSERT_tblPLAYLIST_AND_tblCUSTOMER_PLAYLIST
 @PlaylistName = '',
 @Descr = '',
@@ -126,3 +127,5 @@ WHERE CT.custTypeName = 'Premium'
 	AND C.custDOB <= (SELECT GETDATE() - (365.25 * 18))	
 GROUP BY C.custID, C.custFName, C.custLName
 GO
+
+select * from tblEVENT

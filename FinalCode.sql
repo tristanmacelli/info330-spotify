@@ -748,7 +748,25 @@ WHERE GR.genreName = 'Pop'
 GROUP BY G.groupName
 GO
 
--- 5. Amelia's Query
+-- 5. Find all songs in a playlist that have over 50 songs
+		-- Can change number to 1 or 2 to test
+SELECT S.songName
+FROM tblSONG S 
+	JOIN tblSONG_GROUP SG ON S.songID = SG.songID
+	JOIN tblRECORDING R ON SG.songGroupID = R.songGroupID
+	JOIN tblEVENT E ON R.recordingID = E.recordingID
+	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
+WHERE ET.eventTypeName IN
+	(
+		SELECT ET2.eventTypeName
+		FROM tblEVENT_TYPE ET2 
+			JOIN tblEVENT E2 ON ET2.eventTypeID = E2.eventTypeID
+		WHERE ET2.eventTypeName LIKE 'addToPlaylist%'
+		GROUP BY ET2.eventTypeName
+		HAVING COUNT(E2.eventID) > 50
+	)
+GROUP BY S.SongName
+GO
 
 -- Lookup Table Stored Procedures
 CREATE PROCEDURE usp_INSERT_tblSONG

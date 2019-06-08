@@ -125,18 +125,26 @@ END
 GO
 
 /*
-	Find all premium customers who registered between 2010 and 2014, who are also at least 18 years old 
+	Find all premium customers who are at least 18 years old, and have 'Love Yourself' in a playlist
 */
 SELECT C.custID, C.custFName, C.custLName
-FROM tblCUSTOMER C
-	JOIN tblCUSTOMER_TYPE CT ON C.custTypeID = CT.custTypeID
-	JOIN tblEVENT E ON C.custID = E.custID
-	JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-WHERE CT.custTypeName = 'Premium'
-	AND ET.eventTypeName = 'register'
-	AND E.eventDate BETWEEN 'January 1, 2010' AND 'December 31, 2014'
-	AND C.custDOB <= (SELECT GetDate()) - 18	
-GROUP BY C.custID, C.custFName, C.custLName
+FROM tblEVENT_TYPE ET
+	JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
+	JOIN tblRECORDING R ON E.recordingID = R.recordingID
+	JOIN tblSONG_GROUP SG ON R.songGroupID = SG.songGroupID
+	JOIN tblSONG S on SG.songID = S.songID	
+	JOIN tblCUSTOMER C ON E.custID = C.custID
+WHERE S.songName = 'Love Yourself' AND (SELECT SUBSTRING(ET.eventTypeName, 14 , LEN(ET.eventTypeName))) IN (
+	 (
+		SELECT P.playListID 
+		FROM tblPLAYLIST P
+			JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
+			JOIN tblCUSTOMER C ON CP.custID = C.custID
+			JOIN tblCUSTOMER_TYPE CT ON C.custTypeID = CT.custTypeID
+		WHERE C.custDOB <= (SELECT GETDATE() - (365.25 * 18)) AND CT.custTypeName = 'Premium'
+	)
+)
+GO
 
 EXECUTE usp_INSERT_tblRECORDING_RATING
 @Name = 'Explicit'

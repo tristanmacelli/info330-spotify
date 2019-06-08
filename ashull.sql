@@ -1,8 +1,7 @@
 USE Group8_Spotify
 SELECT * FROM tblDEVICE_TYPE
 
--- Can only add to your own playlist (Amelia)
-
+-- Can only add to your own playlist (if it's private) 
 CREATE FUNCTION fn_RestrictPlaylistAdditions()
 RETURNS INT
 AS
@@ -15,13 +14,15 @@ BEGIN
 			JOIN tblCUSTOMER_PLAYLIST CP ON P.playListID = CP.playListID
 			JOIN tblCUSTOMER C ON CP.custID = C.custID
 		WHERE PT.playlistTypeName = 'Private'
-			AND C.custID NOT IN (
-				SELECT E.eventID
+			AND 'addToPlayList' + CAST(P.playListID AS VARCHAR(100)) IN (
+				SELECT ET.eventTypeName
 				FROM tblEVENT_TYPE ET
 					JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
-					JOIN tblCUSTOMER C ON E.custID = C.custID
+					JOIN tblCUSTOMER C2 ON E.custID = C2.custID
 				WHERE ET.eventTypeName LIKE 'addToPlayList%' + CAST(P.playlistID AS VARCHAR(100))
+				AND C.custID != C2.custID
 			)
+			
 	)
 	BEGIN
 		SET @Ret = 1
@@ -30,27 +31,10 @@ BEGIN
 END
 GO
 
--- Find private playlists where the the event
-SELECT *
-FROM tblPLAYLIST_TYPE PT
-	JOIN tblPLAYLIST P ON PT.playlistTypeID = P.playlistTypeID
-	JOIN tblCUSTOMER_PLAYLIST CP ON P.playListID = CP.playListID
-	JOIN tblCUSTOMER C ON CP.custID = C.custID
-WHERE PT.playlistTypeName = 'Private'
-	AND C.custID NOT IN (
-		SELECT E.eventID
-		FROM tblEVENT_TYPE ET
-			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
-			JOIN tblCUSTOMER C ON E.custID = C.custID
-		WHERE ET.eventTypeName LIKE 'addToPlayList%' + CAST(P.playlistID AS VARCHAR(100))
-	)
-
--- Find adds to playlist
-		SELECT E.eventID
-		FROM tblEVENT_TYPE ET
-			JOIN tblEVENT E ON ET.eventTypeID = E.eventTypeID
-			JOIN tblCUSTOMER C ON E.custID = C.custID
-		WHERE ET.eventTypeName LIKE 'addToPlayList9'
+ALTER TABLE tblEVENT
+ADD CONSTRAINT ck_RestrictPlaylistAdditions
+CHECK (dbo.fn_RestrictPlaylistAdditions() = 0)
+GO
 
 
 -- Find genre of most songs
@@ -74,28 +58,36 @@ BEGIN
 END
 GO
 
+ALTER TABLE tblALBUM
+ADD albumGenre AS (dbo.fn_ComputeAlbumGenre(albumID))
+
+
 -- Find user’s favorite playlist (playlist with the most liked songs in them, the user must have liked the song)
--- Takes in customer id and returns favorite playlist id
+-- Takes in customer id and returns favorite playlist name
 CREATE FUNCTION fn_FavoritePlaylist(@PK INT)
-RETURNS INT
+RETURNS VARCHAR(75)
 AS
 BEGIN
-	DECLARE @Ret INT = (
-		SELECT playlistID FROM (
-			SELECT TOP 1 P.playlistID, COUNT(*) as Count
+	DECLARE @Ret VARCHAR(75) = (
+		SELECT playlistName FROM (
+			SELECT TOP 1 P.playlistID, P.playlistName, COUNT(*) as Count
 			FROM tblPLAYLIST P
 				JOIN tblCUSTOMER_PLAYLIST CP ON P.playlistID = CP.playlistID
 				JOIN tblCUSTOMER C ON CP.custID = C.custID
 				JOIN tblEVENT E ON C.custID = E.custID
 				JOIN tblEVENT_TYPE ET ON E.eventTypeID = ET.eventTypeID
-			WHERE ET.eventTypeName = 'like'
-			GROUP BY P.playlistID
+			WHERE ET.eventTypeName = 'like' AND C.custID = @PK
+			GROUP BY P.playlistID, P.PlaylistName
 			ORDER BY Count DESC
 		) as sbq
 	)
 	RETURN @Ret
 END
 GO
+
+ALTER TABLE tblCUSTOMER
+ADD favoritePlaylist AS (dbo.fn_FavoritePlaylist(custID))
+
 
 -- Insert into tblSONG_GROUP
 CREATE PROCEDURE usp_INSERT_tblSONG_GROUP

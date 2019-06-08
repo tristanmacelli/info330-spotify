@@ -747,3 +747,105 @@ WHERE GR.genreName = 'Pop'
   AND E.eventDate BETWEEN 'January 1, 2012' AND 'December 31, 2019'
 GROUP BY G.groupName
 GO
+
+-- 5. Amelia's Query
+
+-- Lookup Table Stored Procedures
+CREATE PROCEDURE usp_INSERT_tblSONG
+@songName varchar(75)
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblSONG (songName)
+VALUES (@songName)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_tblGROUP
+@groupName varchar(75),
+@groupBio varchar(500),
+@groupPic varchar(500)
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblGROUP (groupName, groupBio, groupPic)
+VALUES (@groupName, @groupBio, @groupPic)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_tblALBUM
+@Name varchar(75),
+@Pic varchar(500),
+@Descr varchar(500),
+@Label varchar(75),
+@Release Date
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblALBUM(albumName, albumPic, albumDescr, albumLabel, albumReleaseDate)
+VALUES (@Name, @Pic, @Descr, @Label, @Release)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_tblRECORDING_RATING
+@Name varchar(75)
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblRECORDING_RATING(ratingName)
+VALUES (@Name)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_tblCUSTOMER_TYPE
+@CustTypeName varchar(75),
+@CustTypeDescr varchar(500)
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblCUSTOMER_TYPE(custTypeName, custTypeDescr)
+VALUES(@CustTypeName, @CustTypeDescr)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_tblPLAYLIST_TYPE
+@PlaylistTypeName varchar(75)
+
+AS
+
+BEGIN TRAN T1
+INSERT INTO tblPLAYLIST_TYPE(playlistTypeName)
+VALUES(@PlaylistTypeName)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_ARTIST
+@Fname varchar (30),
+@Lname varchar(30),
+@Bio varchar(1000),
+@Pic varchar(500)
+
+AS 
+
+BEGIN TRAN T1
+INSERT INTO tblARTIST(artistFName, artistLName, artistBio, artistPic)
+VALUES (@Fname, @Lname, @Bio, @Pic)
+COMMIT TRAN T1
+GO
+
+CREATE PROCEDURE usp_INSERT_GENRE
+@GName varchar (100),
+@GDescr varchar(500)
+
+AS 
+
+BEGIN TRAN T1
+INSERT INTO tblGENRE(genreName, genreDescr)
+VALUES (@GName, @GDescr)
+COMMIT TRAN T1
+GO
